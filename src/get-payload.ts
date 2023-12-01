@@ -1,7 +1,8 @@
 import dotenv from "dotenv";
 import path from "path";
-import payload from "payload";
+import payload, { Payload } from "payload";
 import type { InitOptions } from "payload/config";
+import nodemailer from "nodemailer";
 
 interface Args {
   initOptions?: Partial<InitOptions>;
@@ -9,6 +10,16 @@ interface Args {
 
 dotenv.config({
   path: path.resolve(__dirname, "../.env"),
+});
+
+const transporter = nodemailer.createTransport({
+  host: "smtp.resend.com",
+  secure: true,
+  port: 465,
+  auth: {
+    user: "resend",
+    pass: process.env.RESEND_API_KEY,
+  },
 });
 
 let cached = (global as any).payload;
@@ -20,7 +31,9 @@ if (!cached) {
   };
 }
 
-export const gePayloadClient = async ({ initOptions }: Args = {}) => {
+export const getPayloadClient = async ({
+  initOptions,
+}: Args = {}): Promise<Payload> => {
   if (!process.env.PAYLOAD_SECRET) {
     throw new Error("Payload is missing");
   }
@@ -32,6 +45,11 @@ export const gePayloadClient = async ({ initOptions }: Args = {}) => {
       secret: process.env.PAYLOAD_SECRET,
       local: initOptions?.express ? false : true,
       ...(initOptions || {}),
+      email: {
+        transport: transporter,
+        fromAddress: process.env.RESEND_FROM!,
+        fromName: process.env.RESEND_FROM_NAME!,
+      },
     });
   }
 
@@ -41,4 +59,5 @@ export const gePayloadClient = async ({ initOptions }: Args = {}) => {
     cached.promise = null;
     throw error;
   }
+  return cached.client;
 };
