@@ -14,6 +14,16 @@ pnpm dev
 bun dev
 ```
 
+add env-
+PAYLOAD_SECRET=mysecret
+MONGODB_URL=mongodb+srv://rohan:KTReIzDb9nguvnq7@cluster0.ke0cexf.mongodb.net/?retryWrites=true&w=majority
+NEXT_PUBLIC_SERVER_URL=http://localhost:3000
+
+RESEND_API_KEY =re_YgG8ipZh_CeNzexRfPmbupw37LWtk7pTH
+
+RESEND_FROM=onboarding@resend.dev
+RESEND_FROM_NAME=Rohan
+
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
